@@ -2,6 +2,8 @@ extends CharacterBody2D
 
 class_name Player
 
+var getsuga_scene: PackedScene = preload("res://player/Getsuga.tscn");
+
 const SPEED = 200.0;
 const JUMP_VELOCITY = -300.0;
 const DEFAULT_MAX_JUMPS = 2;
@@ -10,12 +12,15 @@ const DAMAGE = 5;
 var is_wall_hugging = false;
 var is_wall_jump = false;
 var is_attacking = false;
+var is_getsuga_attacking = false;
 var is_hitting_by_enemy = false;
 var jump_count = 0;
 var current_enemy_damage = null;
 var enemy_in_melee_attack_range = false;
 var attack_shape_start_position: Vector2;
 var attack_shape_rotation: float;
+
+
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -24,12 +29,13 @@ signal GotHit;
 
 enum State {
 	ATTACK,
+	GETSUGA,
 	IDLE,
 	JUMP,
 	FALL,
 	RUN,
 	DAMAGED,
-	DEAD
+	DEAD,
 }
 
 var CURRENT_STATE = State.IDLE;
@@ -59,10 +65,23 @@ func attack():
 		if area.get_parent() is BoarMob:
 			area.get_parent().got_hit(DAMAGE, lastFacingDirection);
 	
-func get_is_attack() -> bool:
+	
+func check_normal_attack(): 
 	if Input.is_action_just_pressed('attack') && !is_attacking:
 		$SlashSound.play();
 		attack()
+		
+func check_getsuga_attack():
+	if Input.is_action_just_pressed("getsuga") && !is_attacking && !is_getsuga_attacking:
+		is_getsuga_attacking = true;
+		create_getsuga_moon();
+
+func create_getsuga_moon():
+	var moon = getsuga_scene.instantiate() as Getsuga;
+	moon.position = position;
+	get_parent().add_child(moon);
+
+func get_is_attack() -> bool:
 	if Input.is_action_just_pressed("attack") || is_attacking:
 		return true;
 	else:
@@ -93,9 +112,11 @@ func set_movement_effect(delta):
 		
 	#wall_jump_observer(get_wall_normal(), direction);
 	jump_observer_with_max_count(DEFAULT_MAX_JUMPS);
+	check_normal_attack();
+	check_getsuga_attack();
 	is_attacking = get_is_attack();
 	
-	if direction && !is_attacking:
+	if direction && !is_attacking && !is_getsuga_attacking:
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED / 10)
@@ -113,7 +134,7 @@ func set_animation(animation, isFlipHorizontal):
 		$Attack/CollisionShape2D.rotation = attack_shape_rotation * multiVector.x;
 		
 	match animation:
-		'fall', 'jump', 'attack':
+		'fall', 'jump', 'attack', 'getsuga':
 			pass;
 		_:
 			if !$AnimatedSprite2D.is_playing():
@@ -123,6 +144,9 @@ func set_state():
 	var absVelocity = abs(velocity.x);
 	if is_hitting_by_enemy && !is_attacking:
 		CURRENT_STATE = State.DAMAGED;
+		return;
+	if is_getsuga_attacking:
+		CURRENT_STATE = State.GETSUGA;
 		return;
 	if is_attacking:
 		CURRENT_STATE = State.ATTACK;
@@ -142,6 +166,8 @@ func set_state():
 func get_animation():
 	var absVelocity = abs(velocity.x)
 	match CURRENT_STATE:
+		State.GETSUGA:
+			return 'getsuga';
 		State.ATTACK:
 			return 'attack';
 		State.JUMP:
@@ -154,10 +180,13 @@ func get_animation():
 			return 'run';
 		State.DAMAGED:
 			return 'damaged';
+		
 
 func _on_animated_sprite_2d_animation_finished():
 	if($AnimatedSprite2D.animation == 'attack'):
 		is_attacking = false;
+	if($AnimatedSprite2D.animation == 'getsuga'):
+		is_getsuga_attacking = false;
 
 func _got_hit(number: int):
 	$HitTimer.start();

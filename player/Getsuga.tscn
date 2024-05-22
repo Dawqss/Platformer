@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://bl3u7aah6le7g"]
+
+[ext_resource type="Script" path="res://player/Getsuga.gd" id="1_804uk"]
+[ext_resource type="Texture2D" uid="uid://cacfuq2f81mdh" path="res://art/Legacy-Fantasy - High Forest 2.3/Character/GetsugaMissle/GetsugaMissleStart.png" id="1_gdbee"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_se0rl"]
+atlas = ExtResource("1_gdbee")
+region = Rect2(0, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0sub6"]
+atlas = ExtResource("1_gdbee")
+region = Rect2(96, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u51em"]
+atlas = ExtResource("1_gdbee")
+region = Rect2(192, 0, 96, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cg5xh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_se0rl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0sub6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u51em")
+}],
+"loop": false,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_itfce"]
+size = Vector2(13, 57)
+
+[node name="Getsuga" type="Area2D"]
+script = ExtResource("1_804uk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 2
+sprite_frames = SubResource("SpriteFrames_cg5xh")
+frame = 2
+frame_progress = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(9, -0.5)
+shape = SubResource("RectangleShape2D_itfce")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

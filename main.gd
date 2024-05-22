@@ -10,10 +10,6 @@ var healthBar: HealthBar;
 func _ready():
 	healthBar = $Camera2D/HealthBar;
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
 func add_health(number: int):
 	current_health = clamp(current_health + number, 0, MAX_HEALTH);
 	healthBar.set_label_value(str(current_health));

@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://b672epg2ubmxy"]
+[gd_scene load_steps=66 format=3 uid="uid://b672epg2ubmxy"]
 
 [ext_resource type="Script" path="res://player/player.gd" id="1_741c6"]
 [ext_resource type="Texture2D" uid="uid://y5fr86ngquk1" path="res://art/Legacy-Fantasy - High Forest 2.3/Character/Idle/Idle-Sheet.png" id="1_o3u8p"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://cv0al72cg75ii" path="res://art/Legacy-Fantasy - High Forest 2.3/Character/Run/Run-Sheet.png" id="2_ra5au"]
 [ext_resource type="Texture2D" uid="uid://bm6rmkj52u4o" path="res://art/Legacy-Fantasy - High Forest 2.3/Character/Damaged/Damaged.png" id="3_bp5or"]
 [ext_resource type="Texture2D" uid="uid://1k10yx1of6fl" path="res://art/Legacy-Fantasy - High Forest 2.3/Character/Jump-Start/Jump-Start-Sheet.png" id="3_ih21p"]
+[ext_resource type="Texture2D" uid="uid://cdtkonwn8jro7" path="res://art/Legacy-Fantasy - High Forest 2.3/Character/Getsuga.png" id="6_paee1"]
 [ext_resource type="AudioStream" uid="uid://on8tklb8x3au" path="res://slash.mp3" id="8_x52gc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0tbqe"]
@@ -120,6 +121,38 @@ region = Rect2(640, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_gopkr"]
 atlas = ExtResource("2_cjvm5")
 region = Rect2(704, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sci7l"]
+atlas = ExtResource("6_paee1")
+region = Rect2(0, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5kgvm"]
+atlas = ExtResource("6_paee1")
+region = Rect2(96, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3oii8"]
+atlas = ExtResource("6_paee1")
+region = Rect2(192, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bvbpp"]
+atlas = ExtResource("6_paee1")
+region = Rect2(288, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sbp16"]
+atlas = ExtResource("6_paee1")
+region = Rect2(384, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1qk80"]
+atlas = ExtResource("6_paee1")
+region = Rect2(480, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a37ld"]
+atlas = ExtResource("6_paee1")
+region = Rect2(576, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bhfg2"]
+atlas = ExtResource("6_paee1")
+region = Rect2(672, 0, 96, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tw4oi"]
 atlas = ExtResource("1_o3u8p")
@@ -290,6 +323,35 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_sci7l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5kgvm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3oii8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bvbpp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sbp16")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1qk80")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a37ld")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bhfg2")
+}],
+"loop": false,
+"name": &"getsuga",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_tw4oi")
 }, {
 "duration": 1.0,
@@ -370,8 +432,7 @@ metadata/_edit_lock_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_unrrt")
-animation = &"damaged"
-frame_progress = 0.541944
+animation = &"getsuga"
 
 [node name="SlashSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("8_x52gc")
