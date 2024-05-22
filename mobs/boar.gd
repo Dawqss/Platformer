@@ -53,12 +53,12 @@ func _physics_process(delta):
 	#true -> right
 	var current_direction = velocity.x > 0;
 	if !ray_cast.is_colliding() && is_on_floor():
-		print('not_colliding', current_direction);
 		if current_direction:
 			direction = -1;
 		else:
 			direction = 1;
-	print(direction);
+	ray_cast.position.x = ray_cast_start_positon.x * -direction;
+	$AnimatedSprite2D.flip_h = bool(direction + 1);
 	if !is_on_floor():
 		velocity.y += gravity * delta;
 	else:
