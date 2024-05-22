@@ -1,10 +1,15 @@
-[gd_scene load_steps=23 format=3 uid="uid://b7pfg81i3uyda"]
+[gd_scene load_steps=28 format=3 uid="uid://b7pfg81i3uyda"]
 
 [ext_resource type="Script" path="res://mobs/boar.gd" id="1_2cw0p"]
 [ext_resource type="Texture2D" uid="uid://bt0g2e12jkidc" path="res://art/Legacy-Fantasy - High Forest 2.3/Mob/Boar/Idle/Idle-Sheet.png" id="1_top00"]
 [ext_resource type="Texture2D" uid="uid://g45mg4gtndec" path="res://art/Legacy-Fantasy - High Forest 2.3/Mob/Boar/Hit-Vanish/Hit-Sheet.png" id="1_x2p0q"]
 [ext_resource type="Texture2D" uid="uid://dmfwgvw681tl7" path="res://art/Legacy-Fantasy - High Forest 2.3/Mob/Boar/Run/Run-Sheet.png" id="4_on8s1"]
 [ext_resource type="PackedScene" uid="uid://bbtchm7j8lb2p" path="res://hud/hud_frame.tscn" id="4_tnpim"]
+[ext_resource type="Texture2D" uid="uid://bb783l1bqeixf" path="res://art/FXPack_nyknck/Smoke/FX001/FX001_01.png" id="5_dn2vi"]
+[ext_resource type="Texture2D" uid="uid://b51ht7gn0lh5e" path="res://art/FXPack_nyknck/Smoke/FX001/FX001_02.png" id="6_0xdd2"]
+[ext_resource type="Texture2D" uid="uid://cwdmbd2wd6gb5" path="res://art/FXPack_nyknck/Smoke/FX001/FX001_03.png" id="7_ra6ot"]
+[ext_resource type="Texture2D" uid="uid://nhnwndcb6iv4" path="res://art/FXPack_nyknck/Smoke/FX001/FX001_04.png" id="8_krrm2"]
+[ext_resource type="Texture2D" uid="uid://0osa2h7lxeho" path="res://art/FXPack_nyknck/Smoke/FX001/FX001_05.png" id="9_2v2hh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jkdus"]
 atlas = ExtResource("1_x2p0q")
@@ -120,6 +125,26 @@ animations = [{
 "loop": true,
 "name": &"Run",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_dn2vi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_0xdd2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ra6ot")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_krrm2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_2v2hh")
+}],
+"loop": false,
+"name": &"Vanish",
+"speed": 8.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1cniu"]
@@ -131,12 +156,12 @@ radius = 13.0
 height = 38.0
 
 [node name="Boar" type="CharacterBody2D"]
+collision_mask = 3
 script = ExtResource("1_2cw0p")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_mdg6k")
-animation = &"Run"
-frame_progress = 0.915437
+animation = &"Vanish"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -175,6 +200,10 @@ metadata/_edit_lock_ = true
 position = Vector2(-24, 6)
 target_position = Vector2(0, 13)
 
+[node name="StunTimer" type="Timer" parent="."]
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="animation_looped" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_looped"]
 [connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]
 [connection signal="timeout" from="DamageLabelTimer" to="." method="_on_damage_label_timer_timeout"]
+[connection signal="timeout" from="StunTimer" to="." method="_on_stun_timer_timeout"]

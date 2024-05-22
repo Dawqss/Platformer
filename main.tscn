@@ -32,6 +32,20 @@ stream = ExtResource("4_tkt0j")
 [node name="Boar" parent="." instance=ExtResource("5_8mvua")]
 z_index = 1
 position = Vector2(343, 109)
-direction = -1
+
+[node name="Boar2" parent="." instance=ExtResource("5_8mvua")]
+position = Vector2(512, 81)
+
+[node name="Boar3" parent="." instance=ExtResource("5_8mvua")]
+position = Vector2(665, 78)
+
+[node name="Boar4" parent="." instance=ExtResource("5_8mvua")]
+position = Vector2(804, 313)
+
+[node name="Boar5" parent="." instance=ExtResource("5_8mvua")]
+position = Vector2(1130, 97)
+
+[node name="Boar6" parent="." instance=ExtResource("5_8mvua")]
+position = Vector2(1341, 532)
 
 [connection signal="GotHit" from="Player" to="." method="_on_player_got_hit"]

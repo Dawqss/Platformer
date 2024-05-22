@@ -4,7 +4,7 @@ class_name Player
 
 const SPEED = 200.0;
 const JUMP_VELOCITY = -300.0;
-const DEFAULT_MAX_JUMPS = 1;
+const DEFAULT_MAX_JUMPS = 2;
 const DAMAGE = 5;
 
 var is_wall_hugging = false;
@@ -40,6 +40,9 @@ func _ready():
 	attack_shape_start_position = $Attack/CollisionShape2D.position;
 	attack_shape_rotation = $Attack/CollisionShape2D.rotation;
 
+var direction;
+var lastFacingDirection;
+
 func _physics_process(delta):
 	set_state();
 	set_movement_effect(delta);
@@ -54,8 +57,7 @@ func _physics_process(delta):
 func attack():
 	for area in $Attack.get_overlapping_areas():
 		if area.get_parent() is BoarMob:
-			area.get_parent().got_hit(DAMAGE);
-			print('damage');
+			area.get_parent().got_hit(DAMAGE, lastFacingDirection);
 	
 func get_is_attack() -> bool:
 	if Input.is_action_just_pressed('attack') && !is_attacking:
@@ -82,7 +84,9 @@ func jump_observer_with_max_count(max_count):
 			jump();		
 
 func set_movement_effect(delta):
-	var direction = Input.get_axis("move_left", "move_right");
+	direction = Input.get_axis("move_left", "move_right");
+	if direction != 0:
+		lastFacingDirection = direction;
 	
 	if !is_on_floor():
 		velocity.y += gravity * delta;
@@ -162,11 +166,10 @@ func _got_hit(number: int):
 	emit_remove_health(number);
 	
 func _on_hitbox_area_exited(area):
-	print('_on_hitbox_area_exited', area.get_parent())
-	is_hitting_by_enemy = false;
-	current_enemy_damage = null;
-	$HitTimer.stop();
-		
+	if area.get_parent() is BoarMob:
+		is_hitting_by_enemy = false;
+		current_enemy_damage = null;
+		$HitTimer.stop();
 
 func _on_hit_timer_timeout():
 	if is_hitting_by_enemy && current_enemy_damage != null:
@@ -175,7 +178,7 @@ func _on_hit_timer_timeout():
 func emit_remove_health(number: int):
 	GotHit.emit(SignalsNames.names.REMOVE_HEALTH, number);
 
-func _on_attack_area_entered(area):
+func _on_attack_area_entered(area: Area2D):
 	enemy_in_melee_attack_range = true;
 
 func _on_attack_area_exited(area):
