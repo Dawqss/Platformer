@@ -45,9 +45,12 @@ func got_hit(damage: int, direction: float):
 		stunTimer.start();
 	
 func die():
+	stunTimer.stop();
+	damage_label_timer.stop();
 	queue_free();
 
 func _on_animated_sprite_2d_animation_looped():
+	animated_sprite.animation;
 	if current_health == 0 && animated_sprite.animation == "Damage":
 		set_state(StateCase.Vanishing);
 		
@@ -57,7 +60,10 @@ func _on_animated_sprite_2d_animation_finished():
 
 func _on_stun_timer_timeout():
 	stunTimer.stop();
-	set_state(StateCase.Run);
+	if current_health == 0:
+		set_state(StateCase.Vanishing);
+	else:
+		set_state(StateCase.Run);
 
 func _on_damage_label_timer_timeout():
 	current_damage = null; #props only for label now

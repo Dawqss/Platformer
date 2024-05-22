@@ -12,7 +12,6 @@ func _ready():
 func _process(delta):
 	position.x += delta * SPEED;
 	for area in get_overlapping_areas():
-		print(area.get_parent());
 		if area.get_parent() is BoarMob:
 			var boarMob = area.get_parent() as BoarMob;
 			boarMob.got_hit(DAMAGE, 1);

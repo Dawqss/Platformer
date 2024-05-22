@@ -7,7 +7,7 @@ enum StateCase {
 	Run,
 	Damaged,
 	Vanishing,
-	Falling
+	Falling,
 }
 
 enum DirectionState {
