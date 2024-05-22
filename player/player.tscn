@@ -231,7 +231,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"damaged",
-"speed": 5.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -370,9 +370,8 @@ metadata/_edit_lock_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_unrrt")
-animation = &"attack"
-frame = 7
-frame_progress = 1.0
+animation = &"damaged"
+frame_progress = 0.541944
 
 [node name="SlashSound" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("8_x52gc")
