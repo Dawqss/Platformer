@@ -55,7 +55,6 @@ func _on_animated_sprite_2d_animation_looped():
 		set_state(StateCase.Vanishing);
 		
 func _on_animated_sprite_2d_animation_finished():
-	print('vanish');
 	die();
 
 func _on_stun_timer_timeout():

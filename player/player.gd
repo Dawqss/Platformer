@@ -64,6 +64,7 @@ func _physics_process(delta):
 		set_animation(get_animation(), null);
 	else:
 		set_animation(get_animation(), velocity.x < 0);
+	check_is_playing();
 	move_and_slide();
 				
 func emitAttack():
@@ -82,6 +83,7 @@ func check_normal_attack():
 		
 func check_getsuga_attack():
 	if Input.is_action_just_pressed("getsuga") && !is_attacking && !is_getsuga_attacking && !is_getsuga_on_cooldown:
+		print("getsuga_attack_pressed");
 		is_getsuga_attacking = true;
 		is_getsuga_on_cooldown = true;
 		$GetsugaCooldownTimer.start();
@@ -182,14 +184,21 @@ func get_animation():
 			return 'run';
 		State.DAMAGED:
 			return 'damaged';
-		
+
+func check_is_playing():
+	if !$AnimatedSprite2D.is_playing():
+		match CURRENT_STATE:
+			State.IDLE, State.RUN, State.DAMAGED:
+				$AnimatedSprite2D.play();
 
 func _on_animated_sprite_2d_animation_finished():
-	if($AnimatedSprite2D.animation == 'attack'):
-		is_attacking = false;
-	if($AnimatedSprite2D.animation == 'getsuga'):
-		is_getsuga_attacking = false;
-
+	print('finish', $AnimatedSprite2D.animation);
+	match $AnimatedSprite2D.animation:
+		'attack', 'getsuga', 'jump':
+			is_attacking = false;
+			is_getsuga_attacking = false;
+		'getsuga':
+			print('we did it');
 func _got_hit(number: int):
 	$HitTimer.start();
 	is_hitting_by_enemy = true;
@@ -223,4 +232,5 @@ func _on_getsuga_cooldown_timer_timeout():
 	HudSignal.emit(HudUpdate.EventNames.GetsugaEnd);
 
 func _on_animated_sprite_2d_animation_changed():
-	print($AnimatedSprite2D.animation);
+	if $AnimatedSprite2D.animation == "jump":
+		is_getsuga_attacking = false;
