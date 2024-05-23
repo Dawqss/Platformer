@@ -14,18 +14,20 @@ var is_wall_jump = false;
 var is_attacking = false;
 var is_getsuga_attacking = false;
 var is_hitting_by_enemy = false;
+
+var is_getsuga_on_cooldown = false;
+var is_attack_on_cooldown = false;
 var jump_count = 0;
 var current_enemy_damage = null;
 var enemy_in_melee_attack_range = false;
 var attack_shape_start_position: Vector2;
 var attack_shape_rotation: float;
 
-
-
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 signal GotHit;
+signal HudSignal;
 
 enum State {
 	ATTACK,
@@ -49,7 +51,13 @@ func _ready():
 var direction;
 var lastFacingDirection;
 
+var time1 = null;
+var time2 = null;
+
+const one_frame_time = 16  #one frame is 16ms delta around;
+
 func _physics_process(delta):
+	#print(delta * 1000);
 	set_state();
 	set_movement_effect(delta);
 	if velocity.x == 0:
@@ -58,34 +66,33 @@ func _physics_process(delta):
 		set_animation(get_animation(), velocity.x < 0);
 	move_and_slide();
 				
-	#$Label.text = String("X: {x}, Y: {y}").format({"x": velocity.x, "y": velocity.y});
-	#$Label.show();
-func attack():
+func emitAttack():
 	for area in $Attack.get_overlapping_areas():
 		if area.get_parent() is BoarMob:
 			area.get_parent().got_hit(DAMAGE, lastFacingDirection);
 	
-	
 func check_normal_attack(): 
-	if Input.is_action_just_pressed('attack') && !is_attacking:
+	if Input.is_action_just_pressed('attack') && !is_attacking && !is_attack_on_cooldown && !is_getsuga_attacking:
+		is_attacking = true;
+		is_attack_on_cooldown = true;
+		$DamageSpeedTimer.start();
+		$AnimatedSprite2D.play('attack');
 		$SlashSound.play();
-		attack()
+		emitAttack();
 		
 func check_getsuga_attack():
-	if Input.is_action_just_pressed("getsuga") && !is_attacking && !is_getsuga_attacking:
+	if Input.is_action_just_pressed("getsuga") && !is_attacking && !is_getsuga_attacking && !is_getsuga_on_cooldown:
 		is_getsuga_attacking = true;
+		is_getsuga_on_cooldown = true;
+		$GetsugaCooldownTimer.start();
+		HudSignal.emit(HudUpdate.EventNames.GetsugaStart);
 		create_getsuga_moon();
 
 func create_getsuga_moon():
 	var moon = getsuga_scene.instantiate() as Getsuga;
 	moon.position = position;
+	moon.direction = lastFacingDirection;
 	get_parent().add_child(moon);
-
-func get_is_attack() -> bool:
-	if Input.is_action_just_pressed("attack") || is_attacking:
-		return true;
-	else:
-		return false;
 	
 func jump():
 	velocity.y = JUMP_VELOCITY;
@@ -114,7 +121,6 @@ func set_movement_effect(delta):
 	jump_observer_with_max_count(DEFAULT_MAX_JUMPS);
 	check_normal_attack();
 	check_getsuga_attack();
-	is_attacking = get_is_attack();
 	
 	if direction && !is_attacking && !is_getsuga_attacking:
 		velocity.x = direction * SPEED
@@ -132,13 +138,9 @@ func set_animation(animation, isFlipHorizontal):
 			multiVector = Vector2(1, 0);
 		$Attack/CollisionShape2D.position = attack_shape_start_position * multiVector;
 		$Attack/CollisionShape2D.rotation = attack_shape_rotation * multiVector.x;
-		
 	match animation:
-		'fall', 'jump', 'attack', 'getsuga':
-			pass;
-		_:
-			if !$AnimatedSprite2D.is_playing():
-				$AnimatedSprite2D.play();
+		"run":
+			$AnimatedSprite2D.play();
 
 func set_state():
 	var absVelocity = abs(velocity.x);
@@ -212,3 +214,13 @@ func _on_attack_area_entered(area: Area2D):
 
 func _on_attack_area_exited(area):
 	enemy_in_melee_attack_range = false;
+
+func _on_damage_speed_timer_timeout():
+	is_attack_on_cooldown = false;
+
+func _on_getsuga_cooldown_timer_timeout():
+	is_getsuga_on_cooldown = false;
+	HudSignal.emit(HudUpdate.EventNames.GetsugaEnd);
+
+func _on_animated_sprite_2d_animation_changed():
+	print($AnimatedSprite2D.animation);

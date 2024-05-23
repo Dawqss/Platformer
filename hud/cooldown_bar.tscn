@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://oeu7agf4wd1o"]
+
+[ext_resource type="Script" path="res://hud/cooldown_bar.gd" id="1_q2eys"]
+[ext_resource type="Texture2D" uid="uid://bh13ayv1ij3hk" path="res://art/Legacy-Fantasy - High Forest 2.3/HUD/Base-01.png" id="2_y8bcl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7nsx"]
+atlas = ExtResource("2_y8bcl")
+region = Rect2(140, 108, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oqrmb"]
+atlas = ExtResource("2_y8bcl")
+region = Rect2(309, 39, 20, 2)
+
+[node name="CooldownBar" type="Node2D"]
+script = ExtResource("1_q2eys")
+
+[node name="CanvasGroup" type="CanvasGroup" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup"]
+texture = SubResource("AtlasTexture_r7nsx")
+
+[node name="Label" type="Label" parent="CanvasGroup"]
+offset_left = -4.0
+offset_top = -12.0
+offset_right = 36.0
+offset_bottom = 11.0
+text = "F"
+
+[node name="Bar" type="Sprite2D" parent="."]
+position = Vector2(-10, 14)
+texture = SubResource("AtlasTexture_oqrmb")
+centered = false
